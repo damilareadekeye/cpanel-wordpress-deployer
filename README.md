@@ -4,6 +4,8 @@
 
 An enterprise-grade automation tool that revolutionizes WordPress deployment on cPanel hosting platforms. This Python-based solution reduces deployment time from 30+ minutes to just 3-5 minutes while ensuring security best practices and seamless Elementor Pro integration.
 
+📖 **For full comprehensive project details and live demo, visit: [damilareadekeye.com/works/software/cpanel-wordpress-deployer](https://damilareadekeye.com/works/software/cpanel-wordpress-deployer)**
+
 ## ✨ Key Features
 
 ### **Automated Deployment Pipeline**
