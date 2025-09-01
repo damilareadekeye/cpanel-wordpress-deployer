@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-"""
-cPanel WordPress Deployer with Elementor Integration
-=====================================================
-Enterprise-Grade WordPress Automation Tool for cPanel Hosting
-Author: Damilare Lekan Adekeye
-"""
-
 import os
 import base64
 import requests
@@ -218,7 +210,39 @@ define('NONCE_SALT',       '{random_string}');
 """
 
         # Create wp-config.php content with database details and salts
-        wp_config = f""" {path}/wp-config.php << 'EOL'\n{wp_config}\nEOL"
+        wp_config = f"""<?php
+/**
+ * WordPress Configuration
+ */
+
+// ** Database settings - You can get this info from your web host ** //
+define('DB_NAME', '{self.username}_{db_name}');
+define('DB_USER', '{self.username}_{db_user}');
+define('DB_PASSWORD', '{db_password}');
+define('DB_HOST', '{db_host}');
+define('DB_CHARSET', 'utf8');
+define('DB_COLLATE', '');
+
+// ** Authentication unique keys and salts ** //
+{salts}
+
+$table_prefix = 'wp_';
+
+define('WP_DEBUG', false);
+
+/* That's all, stop editing! Happy publishing. */
+
+/** Absolute path to the WordPress directory. */
+if ( !defined('ABSPATH') )
+    define('ABSPATH', dirname(__FILE__) . '/');
+
+/** Sets up WordPress vars and included files. */
+require_once(ABSPATH . 'wp-settings.php');
+"""
+
+        # Write the config file using a "here document" in bash
+        # This approach allows creating a file with complex content via shell command
+        cmd = f"cat > {path}/wp-config.php << 'EOL'\n{wp_config}\nEOL"
         return self.make_api_request("Execute", "exec", {"command": cmd})
 
     def set_file_permissions(self, path):
@@ -623,11 +647,7 @@ wp elementor kit import {kit_file} --yes
 
         return results
 
-
-# ==========================
-# EXAMPLE USAGE
-# ==========================
-
+# Example usage
 if __name__ == "__main__":
     # Create a deployer instance with cPanel credentials
     deployer = CPanelWordPressDeployer(
@@ -651,7 +671,7 @@ if __name__ == "__main__":
         # WordPress admin details
         site_title="My WordPress Site",
         admin_user="admin",
-        admin_password="admin_password",
+        admin_password="**********",
         admin_email="admin@example.com",
 
         # Elementor details
@@ -660,8 +680,43 @@ if __name__ == "__main__":
         kit_local_path="/path/to/elementor-kit.zip",
 
         # Additional plugins to install
-        install_plugins=["contact-form-7", "yoast-seo", "wordfence"]
+        install_plugins=["contact-form-7", "yoast-seo"]
     )
 
     # Print the results in a readable format
     print(json.dumps(results, indent=2))
+
+
+"""
+Complete Requirements for cPanel WordPress Deployment From the User (Site Owner)
+
+cPanel Credentials:
+
+cPanel URL (hostname)
+
+Username
+
+Password or API Token (tokens are more secure)
+
+Port (typically 2083 for HTTPS)
+
+Domain Information:
+
+Domain name or subdomain where the site will be hosted
+
+Document root path (typically something like /home/username/public_html)
+
+Database Preferences:
+
+Database name prefix (you'll append username automatically)
+
+Database user prefix
+
+Database password
+"""
+
+
+
+
+
+
